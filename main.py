@@ -4,7 +4,7 @@ import networkx as nx
 from grafo import load_graph_from_file, dijkstra
 
 def main():
-    caminho_arquivo = 'copresence-InVS15.edges'
+    caminho_arquivo = 'ca-sandi_auths.mtx'
    
     if not os.path.exists(caminho_arquivo):
         print(f"Arquivo {caminho_arquivo} não existe.")
@@ -26,11 +26,11 @@ def main():
         visualizar_grafo(grafo, caminhos[no_destino], no_origem, no_destino)
 
 def visualizar_grafo(grafo, caminho, no_origem, no_destino):
-    pos = nx.spring_layout(grafo, seed=42)
-    plt.figure(figsize=(12, 12))
+    pos = nx.spring_layout(grafo, seed=32, k=7.5)  # Usando o layout spring_layout
+    plt.figure(figsize=(14, 14))
    
-    nx.draw_networkx_edges(grafo, pos, edge_color='lightgray', width=1)
-    nx.draw_networkx_nodes(grafo, pos, node_size=500, node_color='skyblue', linewidths=1, edgecolors='black')
+    nx.draw_networkx_edges(grafo, pos, edge_color='lightgray', width=0.5)
+    nx.draw_networkx_nodes(grafo, pos, node_size=500, node_color='skyblue', linewidths=0.5, edgecolors='black')
    
     nx.draw_networkx_edges(grafo, pos, edgelist=list(zip(caminho, caminho[1:])), edge_color='red', width=2.5)
     nx.draw_networkx_nodes(grafo, pos, nodelist=caminho, node_size=700, node_color='red', edgecolors='black')
