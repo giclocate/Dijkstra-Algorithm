@@ -1,59 +1,45 @@
-import networkx as nx
-import sqlite3
+import os
 import matplotlib.pyplot as plt
-
-def conectar_banco(db_name):
-    conn = sqlite3.connect(db_name)
-    return conn
-
-def criar_grafo_bd(conn):
-    cursor = conn.cursor()
-    cursor.execute("SELECT source, target, weight FROM edges")
-    rows = cursor.fetchall()
-
-    G = nx.DiGraph()  # Usando um grafo direcionado
-    for row in rows:
-        G.add_edge(row[0], row[1], weight=row[2])
-    
-    return G
-
-def input_usuario():
-    no_inicial = int(input("Digite o nó inicial: "))
-    no_final = int(input("Digite o nó final: "))
-    return no_inicial, no_final
-
-def menor_caminho(G, no_inicial, no_final):
-    try:
-        if not G.has_node(no_inicial) or not G.has_node(no_final):
-            raise nx.NodeNotFound("Nó inicial ou final não encontrado no grafo.")
-
-        caminho_minimo = nx.dijkstra_path(G, no_inicial, no_final)
-        print(f"Caminho mínimo: {caminho_minimo}")
-
-        # Cores dos arcos
-        arcos_caminho = [(caminho_minimo[i], caminho_minimo[i+1]) for i in range(len(caminho_minimo)-1)]
-        cor_dos_arcos = ['r' if arco in arcos_caminho else 'b' for arco in G.edges]
-
-        # Posições dos nós
-        posicoes_nos = nx.spring_layout(G)  
-        
-        # Desenho do grafo
-        nx.draw_networkx(G, pos=posicoes_nos, edge_color=cor_dos_arcos, with_labels=True,
-                         node_color='w', edgecolors='black', node_size=500, font_size=10, font_color='k')
-
-        plt.show()
-
-    except nx.NetworkXNoPath:
-        print(f"Não há caminho de {no_inicial} para {no_final}")
-    except nx.NodeNotFound as e:
-        print(f"Erro: {e}")
+import networkx as nx
+from grafo import load_graph_from_file, dijkstra
 
 def main():
-    db_name = 'grafo.db'  # Substitua pelo nome do seu banco de dados
-    conn = conectar_banco(db_name)
-    G = criar_grafo_bd(conn)
-    no_inicial, no_final = input_usuario()
-    menor_caminho(G, no_inicial, no_final)
+    caminho_arquivo = 'copresence-InVS15.edges'
+   
+    if not os.path.exists(caminho_arquivo):
+        print(f"Arquivo {caminho_arquivo} não existe.")
+        return
+
+    grafo = load_graph_from_file(caminho_arquivo)
+   
+    no_origem = int(input("Digite o nó de origem: "))
+    no_destino = int(input("Digite o nó de destino: "))
+   
+    distancias, caminhos = dijkstra(grafo, no_origem)
+   
+    if no_destino not in distancias:
+        print(f"Nenhum caminho encontrado do nó {no_origem} para o nó {no_destino}.")
+    else:
+        print(f"Menor distância do nó {no_origem} para o nó {no_destino}: {distancias[no_destino]}")
+        print(f"Caminho: {' -> '.join(map(str, caminhos[no_destino]))}")
+       
+        visualizar_grafo(grafo, caminhos[no_destino], no_origem, no_destino)
+
+def visualizar_grafo(grafo, caminho, no_origem, no_destino):
+    pos = nx.spring_layout(grafo, seed=42)
+    plt.figure(figsize=(12, 12))
+   
+    nx.draw_networkx_edges(grafo, pos, edge_color='lightgray', width=1)
+    nx.draw_networkx_nodes(grafo, pos, node_size=500, node_color='skyblue', linewidths=1, edgecolors='black')
+   
+    nx.draw_networkx_edges(grafo, pos, edgelist=list(zip(caminho, caminho[1:])), edge_color='red', width=2.5)
+    nx.draw_networkx_nodes(grafo, pos, nodelist=caminho, node_size=700, node_color='red', edgecolors='black')
+   
+    nx.draw_networkx_labels(grafo, pos, font_size=10, font_color='black')
+   
+    plt.title(f'Visualização do Grafo\nMenor caminho do nó {no_origem} ao nó {no_destino}', fontsize=15)
+    plt.axis('off')
+    plt.show()
 
 if __name__ == "__main__":
     main()
