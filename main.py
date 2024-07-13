@@ -1,16 +1,16 @@
 import os
 import matplotlib.pyplot as plt
 import networkx as nx
-from grafo import load_graph_from_file, dijkstra
+from grafo import grafo_arquivo, dijkstra
 
 def main():
-    caminho_arquivo = 'Dijkstra-Algorithm/aves-geese-female-foraging.edges'
+    caminho_arquivo = 'Dijkstra-Algorithm\dados\mammalia-macaque-contact-sits.edges'
    
     if not os.path.exists(caminho_arquivo):
         print(f"Arquivo {caminho_arquivo} não existe.")
         return
 
-    grafo = load_graph_from_file(caminho_arquivo)
+    grafo = grafo_arquivo(caminho_arquivo)
    
     no_origem = int(input("Digite o nó de origem: "))
     no_destino = int(input("Digite o nó de destino: "))
@@ -28,7 +28,7 @@ def main():
         visualizar_grafo(grafo, caminho, no_origem, no_destino, distancia)
 
 def visualizar_grafo(grafo, caminho, no_origem, no_destino, distancia):
-    pos = nx.spring_layout(grafo, seed=32, k=7.5, iterations=100)  # Usando o layout spring_layout
+    pos = nx.spring_layout(grafo, seed=12, k=3.5, iterations=100)  # Usando o layout spring_layout
     plt.figure(figsize=(14, 14))
    
     nx.draw_networkx_edges(grafo, pos, edge_color='lightgray', width=0.5)
