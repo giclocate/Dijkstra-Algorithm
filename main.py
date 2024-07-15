@@ -18,7 +18,7 @@ def main():
         try:
             no_origem = int(input("Digite o nó de origem: "))
             if no_origem not in nos_validos:
-                raise ValueError(f"Nó de origem {no_origem} não existe no grafo.")
+                raise ValueError(f" Nó {no_origem} inválido!")
             break
         except ValueError as e:
             print(e)
