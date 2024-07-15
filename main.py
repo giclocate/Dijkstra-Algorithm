@@ -4,16 +4,33 @@ import networkx as nx
 from grafo import grafo_arquivo, dijkstra
 
 def main():
-    caminho_arquivo = 'Dijkstra-Algorithm\dados\mammalia-macaque-contact-sits.edges'
+    caminho_arquivo = 'dados\mammalia-macaque-contact-sits.edges'
    
     if not os.path.exists(caminho_arquivo):
         print(f"Arquivo {caminho_arquivo} não existe.")
         return
 
     grafo = grafo_arquivo(caminho_arquivo)
-   
-    no_origem = int(input("Digite o nó de origem: "))
-    no_destino = int(input("Digite o nó de destino: "))
+
+    nos_validos = set(grafo.nodes())
+    
+    while True:
+        try:
+            no_origem = int(input("Digite o nó de origem: "))
+            if no_origem not in nos_validos:
+                raise ValueError(f"Nó de origem {no_origem} não existe no grafo.")
+            break
+        except ValueError as e:
+            print(e)
+    
+    while True:
+        try:
+            no_destino = int(input("Digite o nó de destino: "))
+            if no_destino not in nos_validos:
+                raise ValueError(f"Nó de destino {no_destino} não existe no grafo.")
+            break
+        except ValueError as e:
+            print(e)
    
     distancias, caminhos = dijkstra(grafo, no_origem)
    
@@ -28,7 +45,7 @@ def main():
         visualizar_grafo(grafo, caminho, no_origem, no_destino, distancia)
 
 def visualizar_grafo(grafo, caminho, no_origem, no_destino, distancia):
-    pos = nx.spring_layout(grafo, seed=12, k=3.5, iterations=100)  # Usando o layout spring_layout
+    pos = nx.spring_layout(grafo, seed=12, k=3.5, iterations=100)  
     plt.figure(figsize=(14, 14))
    
     nx.draw_networkx_edges(grafo, pos, edge_color='lightgray', width=0.5)
@@ -39,7 +56,6 @@ def visualizar_grafo(grafo, caminho, no_origem, no_destino, distancia):
    
     nx.draw_networkx_labels(grafo, pos, font_size=10, font_color='black')
    
-    # Draw edge labels for weights on the path only
     edge_labels = {(caminho[i], caminho[i+1]): grafo[caminho[i]][caminho[i+1]]['weight'] for i in range(len(caminho) - 1)}
     nx.draw_networkx_edge_labels(grafo, pos, edge_labels=edge_labels, font_color='black')
    
