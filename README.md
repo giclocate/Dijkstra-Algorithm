@@ -43,6 +43,9 @@ pip install matplotlib networkx
 - **Amós Kinsley**: Responsável pela integração do banco de dados no código principal.
 - **Lucas dos Santos**: Auxílio na implementação do algoritmo de Dijkstra e testes.
 
+## Imagens
+![WhatsApp Image 2024-07-15 at 17 27 09](https://github.com/user-attachments/assets/88e8adee-5a66-47d5-b4c5-3896e45bbc09)
+
 ## Licença
 Este projeto está licenciado sob a Licença MIT. Veja o arquivo LICENSE para mais detalhes.
 
